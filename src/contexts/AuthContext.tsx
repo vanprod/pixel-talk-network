@@ -15,6 +15,7 @@ interface AuthContextType {
   currentUser: User | null;
   login: (email: string, password: string) => Promise<void>;
   logout: () => void;
+  register: (email: string, password: string, displayName: string) => Promise<void>;
   isAuthenticated: boolean;
   isLoading: boolean;
 }
@@ -96,6 +97,49 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setIsLoading(false);
   };
 
+  const register = async (email: string, password: string, displayName: string) => {
+    setIsLoading(true);
+    
+    // Simulating API delay
+    await new Promise(resolve => setTimeout(resolve, 800));
+    
+    // Check if user with this email already exists
+    const existingUser = MOCK_USERS.find(u => u.email === email);
+    
+    if (existingUser) {
+      setIsLoading(false);
+      throw new Error('Email already registered');
+    }
+    
+    // Create a new user
+    const newUser = {
+      id: `${MOCK_USERS.length + 1}`,
+      email,
+      password,
+      displayName,
+      lastLogin: new Date().toISOString(),
+      isOnline: true,
+    };
+    
+    // In a real app, we would save to database
+    MOCK_USERS.push(newUser);
+    
+    // Create authenticated user object (without password)
+    const authenticatedUser = {
+      id: newUser.id,
+      email: newUser.email,
+      displayName: newUser.displayName,
+      lastLogin: new Date().toISOString(),
+      isOnline: true,
+    };
+    
+    // Save to localStorage for persistence
+    localStorage.setItem('user', JSON.stringify(authenticatedUser));
+    
+    setCurrentUser(authenticatedUser);
+    setIsLoading(false);
+  };
+
   const logout = () => {
     localStorage.removeItem('user');
     setCurrentUser(null);
@@ -107,6 +151,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         currentUser, 
         login, 
         logout, 
+        register,
         isAuthenticated: !!currentUser,
         isLoading 
       }}
