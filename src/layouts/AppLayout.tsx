@@ -10,6 +10,7 @@ import { OnlineUsersList } from '@/components/OnlineUsersList';
 import { ChatInterface } from '@/components/ChatInterface';
 import { CryptoTracker } from '@/components/CryptoTracker';
 import { ExternalLinksSidebar } from '@/components/ExternalLinksSidebar';
+import { Menu, X } from 'lucide-react';
 
 export function AppLayout() {
   const { logout } = useAuth();
@@ -30,6 +31,10 @@ export function AppLayout() {
     navigate('/login');
   };
   
+  const toggleSidebar = () => {
+    setSidebarOpen(prev => !prev);
+  };
+  
   return (
     <div className="flex flex-col h-screen">
       {/* Top header with crypto prices */}
@@ -38,8 +43,18 @@ export function AppLayout() {
       </header>
       
       <div className="flex flex-1 overflow-hidden">
+        {/* Mobile sidebar toggle */}
+        {isMobile && (
+          <button 
+            onClick={toggleSidebar}
+            className="fixed z-50 bottom-4 left-4 bg-primary text-primary-foreground p-3 rounded-full shadow-lg"
+          >
+            {sidebarOpen ? <X size={24} /> : <Menu size={24} />}
+          </button>
+        )}
+        
         {/* Left sidebar - user list + profile */}
-        <aside className={`w-64 border-r flex-shrink-0 flex flex-col ${isMobile ? (sidebarOpen ? 'block' : 'hidden') : 'block'}`}>
+        <aside className={`w-64 border-r flex-shrink-0 flex flex-col ${isMobile ? (sidebarOpen ? 'absolute z-40 h-full bg-background animate-fade-in' : 'hidden') : 'block'}`}>
           <UserProfile />
           <div className="flex-1 overflow-y-auto">
             <OnlineUsersList />
