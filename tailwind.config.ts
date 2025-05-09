@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -61,7 +62,25 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
+				},
+				retro: {
+					black: '#000000',
+					white: '#FFFFFF',
+					gray: {
+						100: '#F1F1F1',
+						200: '#E0E0E0',
+						300: '#C8C8C9',
+						400: '#AAADB0',
+						500: '#8E9196',
+						600: '#666666',
+						700: '#444444',
+						800: '#333333',
+						900: '#222222',
+					}
 				}
+			},
+			fontFamily: {
+				mono: ['Space Mono', 'Courier New', 'monospace'],
 			},
 			borderRadius: {
 				lg: 'var(--radius)',
@@ -84,11 +103,28 @@ export default {
 					to: {
 						height: '0'
 					}
+				},
+				'cursor-blink': {
+					'0%, 100%': { opacity: '1' },
+					'50%': { opacity: '0' }
+				},
+				'glow': {
+					'0%, 100%': { 
+						boxShadow: '0 0 5px rgba(255, 255, 255, 0.5), 0 0 10px rgba(255, 255, 255, 0.3)'
+					},
+					'50%': { 
+						boxShadow: '0 0 8px rgba(255, 255, 255, 0.8), 0 0 15px rgba(255, 255, 255, 0.5)' 
+					}
 				}
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
-				'accordion-up': 'accordion-up 0.2s ease-out'
+				'accordion-up': 'accordion-up 0.2s ease-out',
+				'cursor-blink': 'cursor-blink 1.5s infinite',
+				'glow': 'glow 3s ease-in-out infinite'
+			},
+			boxShadow: {
+				'retro': '0 0 5px rgba(255, 255, 255, 0.5), 0 0 10px rgba(255, 255, 255, 0.3)',
 			}
 		}
 	},
