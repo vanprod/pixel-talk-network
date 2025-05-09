@@ -4,7 +4,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { Button } from '@/components/ui/button';
-import { useMediaQuery } from '@/hooks/use-mobile';
+import { useIsMobile } from '@/hooks/use-mobile';
 import { UserProfile } from '@/components/UserProfile';
 import { OnlineUsersList } from '@/components/OnlineUsersList';
 import { ChatInterface } from '@/components/ChatInterface';
@@ -14,8 +14,16 @@ import { ExternalLinksSidebar } from '@/components/ExternalLinksSidebar';
 export function AppLayout() {
   const { logout } = useAuth();
   const navigate = useNavigate();
-  const isMobile = useMediaQuery('(max-width: 768px)');
+  const isMobile = useIsMobile();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  
+  // Add a default selected user for the chat interface
+  const defaultSelectedUser = {
+    id: '2',
+    name: 'CryptoFan',
+    avatar: undefined,
+    status: 'online' as const
+  };
   
   const handleLogout = () => {
     logout();
@@ -50,7 +58,7 @@ export function AppLayout() {
         
         {/* Main chat area */}
         <main className="flex-1 flex flex-col overflow-hidden">
-          <ChatInterface />
+          <ChatInterface selectedUser={defaultSelectedUser} />
         </main>
         
         {/* Right sidebar - external links */}

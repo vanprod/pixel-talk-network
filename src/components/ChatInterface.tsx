@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { Send, Image, File } from 'lucide-react';
 import { Message } from './Message';
@@ -21,7 +20,7 @@ interface ChatUser {
   status: 'online' | 'offline' | 'away' | 'busy';
 }
 
-interface ChatInterfaceProps {
+export interface ChatInterfaceProps {
   selectedUser: ChatUser;
 }
 
