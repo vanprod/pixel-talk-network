@@ -1,6 +1,5 @@
-
 // Data service for managing user data and messages
-import { User } from '@/contexts/AuthContext';
+import { User } from '@/types/auth';
 
 // Define message structure
 export interface Message {
@@ -55,7 +54,6 @@ export const getUserByEmail = (email: string): User | undefined => {
   return users.find(user => user.email === email);
 };
 
-// Added getUserById function
 export const getUserById = (id: string): User | undefined => {
   const users = getUsers();
   return users.find(user => user.id === id);
