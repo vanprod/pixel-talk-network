@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
@@ -14,7 +13,7 @@ import { Menu, X, Users } from 'lucide-react';
 import { toast } from '@/components/ui/use-toast';
 import { User as UserType } from '@/hooks/use-users';
 
-// Define the User type
+// Define the User type for selected chat users
 interface User {
   id: string;
   name: string;

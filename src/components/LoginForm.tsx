@@ -1,7 +1,9 @@
 
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
+import { Input } from '@/components/ui/input';
 
 export function LoginForm() {
   const [email, setEmail] = useState('');
@@ -9,6 +11,7 @@ export function LoginForm() {
   const [isLoading, setIsLoading] = useState(false);
   const { login } = useAuth();
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -30,6 +33,7 @@ export function LoginForm() {
         title: 'Login successful',
         description: 'Welcome back to Pixel Talk Network',
       });
+      navigate('/dashboard');
     } catch (error) {
       toast({
         title: 'Login failed',

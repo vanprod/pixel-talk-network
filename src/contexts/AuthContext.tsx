@@ -1,10 +1,16 @@
 
 import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
+import { 
+  saveUser, 
+  getUserByEmail, 
+  verifyCredentials as verifyUserCredentials
+} from '@/services/dataService';
 
-// Mock user data structure - would connect to Firebase in a real implementation
-interface User {
+// User data structure
+export interface User {
   id: string;
   email: string;
+  password?: string; // Only used during registration/login, not stored in state
   displayName: string;
   avatar?: string;
   lastLogin: string;
@@ -22,12 +28,12 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-// Mock user data - simulate database
+// Default users (for demo purposes)
 const MOCK_USERS = [
   {
     id: '1',
     email: 'user@example.com',
-    password: 'password123', // This is just for demo purposes
+    password: 'password123',
     displayName: 'PixelUser',
     lastLogin: new Date().toISOString(),
     isOnline: false,
@@ -35,18 +41,30 @@ const MOCK_USERS = [
   {
     id: '2',
     email: 'demo@example.com',
-    password: 'demo123', // This is just for demo purposes
+    password: 'demo123',
     displayName: 'CryptoFan',
     lastLogin: new Date().toISOString(),
     isOnline: false,
   }
 ];
 
+// Initialize default users on first load
+const initializeDefaultUsers = () => {
+  MOCK_USERS.forEach(user => {
+    if (!getUserByEmail(user.email)) {
+      saveUser(user);
+    }
+  });
+};
+
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
+    // Initialize default users
+    initializeDefaultUsers();
+    
     // Check for saved user session
     const savedUser = localStorage.getItem('user');
     
@@ -54,6 +72,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       try {
         const parsedUser = JSON.parse(savedUser);
         setCurrentUser({
+          ...parsedUser,
+          lastLogin: new Date().toISOString(),
+          isOnline: true
+        });
+        
+        // Update user status in storage
+        saveUser({
           ...parsedUser,
           lastLogin: new Date().toISOString(),
           isOnline: true
@@ -73,8 +98,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     // Simulating API delay
     await new Promise(resolve => setTimeout(resolve, 500));
     
-    // Find user with matching email and password
-    const user = MOCK_USERS.find(u => u.email === email && u.password === password);
+    // Verify credentials
+    const user = verifyUserCredentials(email, password);
     
     if (!user) {
       setIsLoading(false);
@@ -86,12 +111,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       id: user.id,
       email: user.email,
       displayName: user.displayName,
+      avatar: user.avatar,
       lastLogin: new Date().toISOString(),
       isOnline: true,
     };
     
     // Save to localStorage for persistence
     localStorage.setItem('user', JSON.stringify(authenticatedUser));
+    
+    // Update user status in storage
+    saveUser({
+      ...authenticatedUser,
+      password: user.password // Keep password in storage but not in state
+    });
     
     setCurrentUser(authenticatedUser);
     setIsLoading(false);
@@ -104,16 +136,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     await new Promise(resolve => setTimeout(resolve, 800));
     
     // Check if user with this email already exists
-    const existingUser = MOCK_USERS.find(u => u.email === email);
+    const existingUser = getUserByEmail(email);
     
     if (existingUser) {
       setIsLoading(false);
       throw new Error('Email already registered');
     }
     
+    // Generate a unique ID
+    const id = `user_${Date.now()}`;
+    
     // Create a new user
     const newUser = {
-      id: `${MOCK_USERS.length + 1}`,
+      id,
       email,
       password,
       displayName,
@@ -121,16 +156,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       isOnline: true,
     };
     
-    // In a real app, we would save to database
-    MOCK_USERS.push(newUser);
+    // Save user to storage
+    saveUser(newUser);
     
     // Create authenticated user object (without password)
     const authenticatedUser = {
       id: newUser.id,
       email: newUser.email,
       displayName: newUser.displayName,
-      lastLogin: new Date().toISOString(),
-      isOnline: true,
+      lastLogin: newUser.lastLogin,
+      isOnline: newUser.isOnline,
     };
     
     // Save to localStorage for persistence
@@ -141,6 +176,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const logout = () => {
+    // Update user status in storage if we have a current user
+    if (currentUser) {
+      saveUser({
+        ...currentUser,
+        isOnline: false,
+        lastLogin: new Date().toISOString(),
+      });
+    }
+    
     localStorage.removeItem('user');
     setCurrentUser(null);
   };

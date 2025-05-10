@@ -38,6 +38,27 @@ export function RegisterForm() {
       return;
     }
     
+    // Basic email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      toast({
+        title: 'Error',
+        description: 'Please enter a valid email address',
+        variant: 'destructive',
+      });
+      return;
+    }
+    
+    // Password strength check
+    if (password.length < 6) {
+      toast({
+        title: 'Error',
+        description: 'Password must be at least 6 characters long',
+        variant: 'destructive',
+      });
+      return;
+    }
+    
     setIsLoading(true);
     
     try {
