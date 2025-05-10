@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
@@ -11,7 +12,7 @@ import { CryptoTracker } from '@/components/CryptoTracker';
 import { ExternalLinksSidebar } from '@/components/ExternalLinksSidebar';
 import { Menu, X, Users } from 'lucide-react';
 import { toast } from '@/components/ui/use-toast';
-import { User } from '@/hooks/use-users';
+import { User as UserType } from '@/hooks/use-users';
 
 // Define the User type
 interface User {
@@ -27,7 +28,7 @@ export function AppLayout() {
   const navigate = useNavigate();
   const isMobile = useIsMobile();
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [selectedUser, setSelectedUser] = useState<User>({
+  const [selectedUser, setSelectedUser] = useState<UserType>({
     id: '2',
     name: 'CryptoFan',
     avatar: undefined,
