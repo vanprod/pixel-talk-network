@@ -1,9 +1,9 @@
-
 import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import { 
   saveUser, 
   getUserByEmail, 
-  verifyCredentials as verifyUserCredentials
+  verifyCredentials as verifyUserCredentials,
+  getUserById
 } from '@/services/dataService';
 
 // User data structure
@@ -15,6 +15,12 @@ export interface User {
   avatar?: string;
   lastLogin: string;
   isOnline: boolean;
+  friends?: string[]; // Array of user IDs
+}
+
+interface ProfileUpdateData {
+  displayName?: string;
+  avatar?: string;
 }
 
 interface AuthContextType {
@@ -22,6 +28,11 @@ interface AuthContextType {
   login: (email: string, password: string) => Promise<void>;
   logout: () => void;
   register: (email: string, password: string, displayName: string) => Promise<void>;
+  updateProfile: (data: ProfileUpdateData) => void;
+  addFriend: (userId: string) => void;
+  removeFriend: (userId: string) => void;
+  isFriend: (userId: string) => boolean;
+  getFriends: () => User[];
   isAuthenticated: boolean;
   isLoading: boolean;
 }
@@ -37,6 +48,7 @@ const MOCK_USERS = [
     displayName: 'PixelUser',
     lastLogin: new Date().toISOString(),
     isOnline: false,
+    friends: ['2']
   },
   {
     id: '2',
@@ -45,6 +57,7 @@ const MOCK_USERS = [
     displayName: 'CryptoFan',
     lastLogin: new Date().toISOString(),
     isOnline: false,
+    friends: ['1']
   }
 ];
 
@@ -188,6 +201,75 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     localStorage.removeItem('user');
     setCurrentUser(null);
   };
+  
+  const updateProfile = (data: ProfileUpdateData) => {
+    if (!currentUser) return;
+    
+    const updatedUser = {...currentUser, ...data};
+    
+    // Update in local state
+    setCurrentUser(updatedUser);
+    
+    // Update in localStorage
+    localStorage.setItem('user', JSON.stringify(updatedUser));
+    
+    // Update in storage
+    saveUser(updatedUser);
+  };
+  
+  const addFriend = (userId: string) => {
+    if (!currentUser) return;
+    
+    // Don't add if already a friend or trying to add self
+    if (isFriend(userId) || userId === currentUser.id) return;
+    
+    const friends = currentUser.friends || [];
+    const updatedUser = {
+      ...currentUser,
+      friends: [...friends, userId]
+    };
+    
+    // Update in local state
+    setCurrentUser(updatedUser);
+    
+    // Update in localStorage
+    localStorage.setItem('user', JSON.stringify(updatedUser));
+    
+    // Update in storage
+    saveUser(updatedUser);
+  };
+  
+  const removeFriend = (userId: string) => {
+    if (!currentUser || !currentUser.friends) return;
+    
+    const updatedFriends = currentUser.friends.filter(id => id !== userId);
+    const updatedUser = {
+      ...currentUser,
+      friends: updatedFriends
+    };
+    
+    // Update in local state
+    setCurrentUser(updatedUser);
+    
+    // Update in localStorage
+    localStorage.setItem('user', JSON.stringify(updatedUser));
+    
+    // Update in storage
+    saveUser(updatedUser);
+  };
+  
+  const isFriend = (userId: string) => {
+    if (!currentUser || !currentUser.friends) return false;
+    return currentUser.friends.includes(userId);
+  };
+  
+  const getFriends = (): User[] => {
+    if (!currentUser || !currentUser.friends) return [];
+    
+    return currentUser.friends
+      .map(id => getUserById(id))
+      .filter((user): user is User => user !== undefined);
+  };
 
   return (
     <AuthContext.Provider 
@@ -196,6 +278,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         login, 
         logout, 
         register,
+        updateProfile,
+        addFriend,
+        removeFriend,
+        isFriend,
+        getFriends,
         isAuthenticated: !!currentUser,
         isLoading 
       }}

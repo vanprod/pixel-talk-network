@@ -2,15 +2,17 @@
 import React, { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Pen } from 'lucide-react';
+import { Pen, Camera } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { toast } from '@/components/ui/use-toast';
+import { fileToDataUrl, validateImageFile } from '@/utils/fileUtils';
 
 export function UserProfile() {
-  const { currentUser } = useAuth();
+  const { currentUser, updateProfile } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
   const [displayName, setDisplayName] = useState(currentUser?.displayName || '');
+  const [isUploading, setIsUploading] = useState(false);
 
   if (!currentUser) return null;
 
@@ -22,23 +24,68 @@ export function UserProfile() {
     .toUpperCase();
 
   const handleSave = () => {
-    // In a real application, this would call an API to update the user's display name
-    // For now, we'll just show a toast
+    updateProfile({ displayName });
     toast({
       title: "Profile updated",
       description: `Display name changed to ${displayName}`,
     });
     setIsEditing(false);
   };
+  
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files || !e.target.files[0]) return;
+    
+    const file = e.target.files[0];
+    if (!validateImageFile(file)) {
+      toast({
+        title: "Invalid image",
+        description: "Please select a JPEG, PNG, GIF, or WebP under 5MB",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    try {
+      setIsUploading(true);
+      const imageUrl = await fileToDataUrl(file);
+      updateProfile({ avatar: imageUrl });
+      toast({
+        title: "Profile picture updated",
+        description: "Your profile picture has been updated successfully"
+      });
+    } catch (error) {
+      toast({
+        title: "Upload failed",
+        description: "Failed to update profile picture. Please try again.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsUploading(false);
+    }
+  };
 
   return (
     <div className="flex items-center gap-3 p-4 border-b relative">
-      <Avatar>
-        <AvatarImage src={currentUser.avatar} />
-        <AvatarFallback className="bg-primary text-primary-foreground">
-          {initials}
-        </AvatarFallback>
-      </Avatar>
+      <div className="relative">
+        <Avatar className="h-14 w-14">
+          <AvatarImage src={currentUser.avatar} />
+          <AvatarFallback className="bg-primary text-primary-foreground">
+            {initials}
+          </AvatarFallback>
+        </Avatar>
+        
+        <label htmlFor="avatar-upload" className="absolute bottom-0 right-0 bg-primary text-primary-foreground p-1 rounded-full cursor-pointer hover:bg-primary/80 transition-colors">
+          <Camera size={16} />
+          <input 
+            type="file" 
+            id="avatar-upload" 
+            className="sr-only" 
+            accept="image/jpeg,image/png,image/gif,image/webp"
+            onChange={handleImageUpload}
+            disabled={isUploading}
+          />
+        </label>
+      </div>
       
       {isEditing ? (
         <div className="flex-1 flex flex-col gap-2">

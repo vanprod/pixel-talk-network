@@ -9,7 +9,8 @@ export const useMessageService = () => {
   const sendMessage = async (
     receiverId: string, 
     content: string, 
-    imageFile?: File
+    imageFile?: File,
+    isStory?: boolean
   ): Promise<Message | null> => {
     if (!currentUser) return null;
     
@@ -36,19 +37,33 @@ export const useMessageService = () => {
       receiverId,
       content,
       timestamp: new Date(),
-      imageUrl
+      imageUrl,
+      isStory: isStory || false
     };
     
     return saveMessage(message);
   };
   
-  const getMessages = (otherUserId: string): Message[] => {
+  const getMessages = (otherUserId: string, includeStories = false): Message[] => {
     if (!currentUser) return [];
-    return getConversation(currentUser.id, otherUserId);
+    const messages = getConversation(currentUser.id, otherUserId);
+    return includeStories ? messages : messages.filter(message => !message.isStory);
+  };
+  
+  const createStory = async (content: string, imageFile?: File): Promise<Message | null> => {
+    // Special receiver ID for stories - they're visible to all friends
+    return sendMessage('stories', content, imageFile, true);
+  };
+  
+  const getStories = (): Message[] => {
+    if (!currentUser) return [];
+    return getConversation(currentUser.id, 'stories');
   };
   
   return {
     sendMessage,
-    getMessages
+    getMessages,
+    createStory,
+    getStories
   };
 };
