@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { ExternalLink } from 'lucide-react';
+import { ExternalLink, BookText } from 'lucide-react'; // Changed Story to BookText
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
 import { FriendsManager } from '@/components/FriendsManager';

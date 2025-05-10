@@ -10,6 +10,7 @@ export interface Message {
   content: string;
   timestamp: Date;
   imageUrl?: string;
+  isStory?: boolean; // Added isStory property
 }
 
 // Local storage keys
@@ -52,6 +53,12 @@ export const getUsers = (): User[] => {
 export const getUserByEmail = (email: string): User | undefined => {
   const users = getUsers();
   return users.find(user => user.email === email);
+};
+
+// Added getUserById function
+export const getUserById = (id: string): User | undefined => {
+  const users = getUsers();
+  return users.find(user => user.id === id);
 };
 
 export const verifyCredentials = (email: string, password: string): User | null => {

@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { useMessageService } from '@/services/messageService';
 import { toast } from '@/components/ui/use-toast';
-import { Image, Story } from 'lucide-react';
+import { Image, BookText } from 'lucide-react'; // Changed Story to BookText
 
 export function StoryCreator() {
   const [content, setContent] = useState('');
@@ -67,7 +67,7 @@ export function StoryCreator() {
   return (
     <form onSubmit={handleSubmit} className="p-4 border rounded-lg space-y-4">
       <div className="flex items-center">
-        <Story className="w-5 h-5 mr-2" />
+        <BookText className="w-5 h-5 mr-2" /> {/* Changed Story to BookText */}
         <h3 className="font-bold">Create a Story</h3>
       </div>
       
