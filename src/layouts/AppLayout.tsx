@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
@@ -12,6 +11,7 @@ import { CryptoTracker } from '@/components/CryptoTracker';
 import { ExternalLinksSidebar } from '@/components/ExternalLinksSidebar';
 import { Menu, X, Users } from 'lucide-react';
 import { toast } from '@/components/ui/use-toast';
+import { User } from '@/hooks/use-users';
 
 // Define the User type
 interface User {
