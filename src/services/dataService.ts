@@ -10,7 +10,11 @@ export interface Message {
   content: string;
   timestamp: Date;
   imageUrl?: string;
-  isStory?: boolean; // Added isStory property
+  videoUrl?: string;
+  fileUrl?: string;
+  fileType?: string;
+  audioUrl?: string;
+  isStory?: boolean;
 }
 
 // Local storage keys

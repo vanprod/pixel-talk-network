@@ -1,12 +1,13 @@
 
 import React, { useState, useRef, useEffect } from 'react';
-import { Send, Image, RefreshCw, Plus, X } from 'lucide-react';
+import { Send, Image, RefreshCw, Plus, X, FileText, Video, File, Play, Mic, MicOff } from 'lucide-react';
 import { Message } from './Message';
 import { UserAvatar } from './UserAvatar';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from './ui/button';
 import { toast } from '@/components/ui/use-toast';
-import { fileToDataUrl, validateImageFile } from '@/utils/fileUtils';
+import { fileToDataUrl, validateImageFile, validateVideoFile, validatePdfFile, getFileType } from '@/utils/fileUtils';
+import { cn } from '@/lib/utils';
 
 export interface ChatMessage {
   id: string;
@@ -15,7 +16,11 @@ export interface ChatMessage {
   senderId: string;
   senderName: string;
   senderAvatar?: string;
-  imageUrl?: string; // Added for image messages
+  imageUrl?: string;
+  videoUrl?: string;
+  fileUrl?: string;
+  fileType?: string;
+  audioUrl?: string;
 }
 
 export interface ChatUser {
@@ -80,10 +85,16 @@ export function ChatInterface({ selectedUser }: ChatInterfaceProps) {
   const { currentUser } = useAuth();
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [newMessage, setNewMessage] = useState('');
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [mediaPreview, setMediaPreview] = useState<{url: string, type: 'image' | 'video' | 'pdf' | 'audio'} | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [isRecording, setIsRecording] = useState(false);
+  const [audioBlob, setAudioBlob] = useState<Blob | null>(null);
+  
   const fileInputRef = useRef<HTMLInputElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const mediaPlayerRef = useRef<HTMLVideoElement | HTMLAudioElement | null>(null);
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const audioChunksRef = useRef<BlobPart[]>([]);
 
   // Load chat history when a user is selected
   useEffect(() => {
@@ -120,7 +131,7 @@ export function ChatInterface({ selectedUser }: ChatInterfaceProps) {
   };
 
   const handleSendMessage = () => {
-    if ((!newMessage.trim() && !imagePreview) || !currentUser) return;
+    if ((!newMessage.trim() && !mediaPreview && !audioBlob) || !currentUser) return;
 
     const newMsg: ChatMessage = {
       id: Date.now().toString(),
@@ -128,12 +139,31 @@ export function ChatInterface({ selectedUser }: ChatInterfaceProps) {
       timestamp: new Date(),
       senderId: currentUser.id,
       senderName: currentUser.displayName,
-      imageUrl: imagePreview || undefined
     };
+
+    if (mediaPreview) {
+      switch (mediaPreview.type) {
+        case 'image':
+          newMsg.imageUrl = mediaPreview.url;
+          break;
+        case 'video':
+          newMsg.videoUrl = mediaPreview.url;
+          break;
+        case 'pdf':
+          newMsg.fileUrl = mediaPreview.url;
+          newMsg.fileType = 'pdf';
+          break;
+      }
+    }
+
+    if (audioBlob) {
+      newMsg.audioUrl = URL.createObjectURL(audioBlob);
+    }
 
     setMessages(prev => [...prev, newMsg]);
     setNewMessage('');
-    setImagePreview(null);
+    setMediaPreview(null);
+    setAudioBlob(null);
     
     // In a real app, you would send the message to a backend service here
   };
@@ -142,10 +172,31 @@ export function ChatInterface({ selectedUser }: ChatInterfaceProps) {
     const file = event.target.files?.[0];
     if (!file) return;
 
-    if (!validateImageFile(file)) {
+    const fileType = getFileType(file);
+    let isValid = false;
+    let errorMessage = "";
+
+    switch (fileType) {
+      case 'image':
+        isValid = validateImageFile(file);
+        errorMessage = "Please select a valid image file (JPG, PNG, GIF, WEBP) under 5MB";
+        break;
+      case 'video':
+        isValid = validateVideoFile(file);
+        errorMessage = "Please select a valid video file (MP4, WebM, OGG) under 100MB";
+        break;
+      case 'pdf':
+        isValid = validatePdfFile(file);
+        errorMessage = "Please select a valid PDF file under 10MB";
+        break;
+      default:
+        errorMessage = "Unsupported file type";
+    }
+
+    if (!isValid) {
       toast({
         title: "Invalid file",
-        description: "Please select a valid image file (JPG, PNG, GIF, WEBP) under 5MB",
+        description: errorMessage,
         variant: "destructive",
         duration: 3000,
       });
@@ -155,16 +206,19 @@ export function ChatInterface({ selectedUser }: ChatInterfaceProps) {
 
     try {
       const dataUrl = await fileToDataUrl(file);
-      setImagePreview(dataUrl);
+      setMediaPreview({
+        url: dataUrl,
+        type: fileType as 'image' | 'video' | 'pdf' | 'audio'
+      });
       toast({
-        title: "Image ready",
-        description: "Your image is ready to send",
+        title: `${fileType.charAt(0).toUpperCase() + fileType.slice(1)} ready`,
+        description: `Your ${fileType} is ready to send`,
         duration: 2000,
       });
     } catch (error) {
       toast({
         title: "Error",
-        description: "Failed to load the image",
+        description: `Failed to load the ${fileType}`,
         variant: "destructive",
         duration: 3000,
       });
@@ -173,12 +227,67 @@ export function ChatInterface({ selectedUser }: ChatInterfaceProps) {
     event.target.value = '';
   };
 
-  const handleImageUploadClick = () => {
+  const handleMediaUploadClick = () => {
     fileInputRef.current?.click();
   };
 
-  const handleCancelImage = () => {
-    setImagePreview(null);
+  const handleCancelMedia = () => {
+    setMediaPreview(null);
+  };
+
+  const startRecording = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const mediaRecorder = new MediaRecorder(stream);
+      mediaRecorderRef.current = mediaRecorder;
+      audioChunksRef.current = [];
+
+      mediaRecorder.ondataavailable = (event) => {
+        if (event.data.size > 0) {
+          audioChunksRef.current.push(event.data);
+        }
+      };
+
+      mediaRecorder.onstop = () => {
+        const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/ogg; codecs=opus' });
+        setAudioBlob(audioBlob);
+        
+        // Stop all audio tracks
+        stream.getAudioTracks().forEach(track => track.stop());
+        
+        toast({
+          title: "Audio recorded",
+          description: "Your audio message is ready to send",
+          duration: 2000,
+        });
+      };
+
+      mediaRecorder.start();
+      setIsRecording(true);
+    } catch (error) {
+      console.error('Error accessing microphone:', error);
+      toast({
+        title: "Microphone error",
+        description: "Could not access your microphone. Please check permissions.",
+        variant: "destructive",
+        duration: 3000,
+      });
+    }
+  };
+
+  const stopRecording = () => {
+    if (mediaRecorderRef.current && isRecording) {
+      mediaRecorderRef.current.stop();
+      setIsRecording(false);
+    }
+  };
+
+  const cancelRecording = () => {
+    if (mediaRecorderRef.current && isRecording) {
+      mediaRecorderRef.current.stop();
+      setIsRecording(false);
+      setAudioBlob(null);
+    }
   };
 
   return (
@@ -227,28 +336,62 @@ export function ChatInterface({ selectedUser }: ChatInterfaceProps) {
                 avatar: msg.senderAvatar
               } : undefined}
               imageUrl={msg.imageUrl}
+              videoUrl={msg.videoUrl}
+              fileUrl={msg.fileUrl}
+              fileType={msg.fileType}
+              audioUrl={msg.audioUrl}
             />
           ))
         )}
         <div ref={messagesEndRef} />
       </div>
       
-      {/* Image preview */}
-      {imagePreview && (
+      {/* Media preview */}
+      {mediaPreview && (
         <div className="p-2 border-t">
           <div className="relative inline-block">
-            <img 
-              src={imagePreview} 
-              alt="Preview" 
-              className="h-20 w-auto rounded object-cover"
-            />
+            {mediaPreview.type === 'image' && (
+              <img 
+                src={mediaPreview.url} 
+                alt="Preview" 
+                className="h-20 w-auto rounded object-cover"
+              />
+            )}
+            {mediaPreview.type === 'video' && (
+              <div className="h-20 w-32 bg-black rounded flex items-center justify-center">
+                <Video className="text-white/70" size={24} />
+              </div>
+            )}
+            {mediaPreview.type === 'pdf' && (
+              <div className="h-20 w-32 bg-gray-100 rounded flex items-center justify-center">
+                <FileText className="text-primary" size={24} />
+              </div>
+            )}
             <Button 
               variant="destructive" 
               size="icon" 
               className="absolute -top-2 -right-2 h-6 w-6 rounded-full"
-              onClick={handleCancelImage}
+              onClick={handleCancelMedia}
             >
               <X size={12} />
+            </Button>
+          </div>
+        </div>
+      )}
+
+      {/* Audio recording preview */}
+      {audioBlob && !isRecording && (
+        <div className="p-2 border-t">
+          <div className="relative inline-flex items-center gap-2 bg-secondary/50 px-3 py-2 rounded-lg">
+            <Play size={16} className="text-primary" />
+            <span className="text-xs">Audio message ready</span>
+            <Button 
+              variant="destructive" 
+              size="icon" 
+              className="h-5 w-5 rounded-full ml-2"
+              onClick={() => setAudioBlob(null)}
+            >
+              <X size={10} />
             </Button>
           </div>
         </div>
@@ -257,22 +400,45 @@ export function ChatInterface({ selectedUser }: ChatInterfaceProps) {
       {/* Message input */}
       <div className="p-4 border-t">
         <div className="flex space-x-2">
-          <Button 
-            variant="ghost" 
-            size="icon" 
-            onClick={handleImageUploadClick} 
-            title="Attach image"
-          >
-            <Image size={20} />
-          </Button>
-          
-          <input
-            type="file"
-            ref={fileInputRef}
-            onChange={handleFileSelect}
-            accept="image/jpeg,image/png,image/gif,image/webp"
-            className="hidden"
-          />
+          <div className="flex gap-1">
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              onClick={handleMediaUploadClick} 
+              title="Attach file"
+            >
+              <Plus size={20} />
+            </Button>
+            
+            <input
+              type="file"
+              ref={fileInputRef}
+              onChange={handleFileSelect}
+              accept="image/*,video/*,application/pdf,audio/*"
+              className="hidden"
+            />
+
+            {isRecording ? (
+              <Button 
+                variant="destructive"
+                size="icon"
+                onClick={stopRecording}
+                className="animate-pulse"
+                title="Stop recording"
+              >
+                <MicOff size={20} />
+              </Button>
+            ) : (
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                onClick={startRecording}
+                title="Record audio"
+              >
+                <Mic size={20} />
+              </Button>
+            )}
+          </div>
           
           <input
             type="text"
@@ -281,11 +447,12 @@ export function ChatInterface({ selectedUser }: ChatInterfaceProps) {
             onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
             placeholder={`Message ${selectedUser.name}...`}
             className="retro-input flex-1"
+            disabled={isRecording}
           />
           
           <Button 
             onClick={handleSendMessage}
-            disabled={!newMessage.trim() && !imagePreview}
+            disabled={(!newMessage.trim() && !mediaPreview && !audioBlob) || isRecording}
             size="icon"
             className="retro-button"
           >
