@@ -121,4 +121,26 @@
   .retro-glow {
     @apply animate-glow;
   }
+  
+  /* New button animations */
+  .btn-click {
+    @apply transition-transform active:scale-95;
+  }
+  
+  .btn-hover {
+    @apply transition-transform hover:scale-110;
+  }
+  
+  .icon-pulse {
+    @apply hover:animate-pulse;
+  }
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+
+.animate-bounce-slow {
+  animation: bounce 2s ease-in-out infinite;
 }

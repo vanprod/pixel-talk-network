@@ -1,10 +1,10 @@
-
 import React, { useState } from 'react';
 import { formatDistanceToNow } from 'date-fns';
 import { UserAvatar } from './UserAvatar';
 import { cn } from '@/lib/utils';
 import { FileText, Play, Pause, Video } from 'lucide-react';
 import { Button } from './ui/button';
+import { playAudioOpenSound } from '@/utils/soundEffects';
 
 interface MessageProps {
   content: string;
@@ -45,6 +45,7 @@ export function Message({
         audioRef.current.pause();
       } else {
         audioRef.current.play();
+        playAudioOpenSound();
       }
       setIsAudioPlaying(!isAudioPlaying);
     }

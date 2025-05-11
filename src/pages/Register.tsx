@@ -1,10 +1,8 @@
 
-import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import { useToast } from '@/hooks/use-toast';
-import { useAuth } from '@/contexts/AuthContext';
-import { ThemeToggle } from '@/components/ThemeToggle';
+import React from 'react';
+import { Link } from 'react-router-dom';
 import { RegisterForm } from '@/components/RegisterForm';
+import { ThemeToggle } from '@/components/ThemeToggle';
 
 export default function Register() {
   return (
@@ -12,7 +10,7 @@ export default function Register() {
       {/* Header with only theme toggle */}
       <header className="border-b p-4">
         <div className="container mx-auto flex items-center justify-between">
-          <h1 className="font-mono font-bold text-lg">PIXEL TALK NETWORK</h1>
+          <h1 className="font-mono font-bold text-lg">HADRA</h1>
           <ThemeToggle />
         </div>
       </header>
@@ -24,7 +22,7 @@ export default function Register() {
             <div className="text-center mb-6">
               <h1 className="text-2xl font-bold">SIGN UP</h1>
               <p className="text-sm text-muted-foreground">
-                Create an account to access the network
+                Create an account to access Hadra
               </p>
             </div>
             

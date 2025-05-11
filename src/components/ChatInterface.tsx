@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { Send, Image, RefreshCw, Plus, X, FileText, Video, File, Play, Mic, MicOff } from 'lucide-react';
 import { Message } from './Message';
@@ -8,6 +7,7 @@ import { Button } from './ui/button';
 import { toast } from '@/components/ui/use-toast';
 import { fileToDataUrl, validateImageFile, validateVideoFile, validatePdfFile, getFileType } from '@/utils/fileUtils';
 import { cn } from '@/lib/utils';
+import { playSendMessageSound, playAudioOpenSound } from '@/utils/soundEffects';
 
 export interface ChatMessage {
   id: string;
@@ -132,6 +132,9 @@ export function ChatInterface({ selectedUser }: ChatInterfaceProps) {
 
   const handleSendMessage = () => {
     if ((!newMessage.trim() && !mediaPreview && !audioBlob) || !currentUser) return;
+
+    // Play send message sound
+    playSendMessageSound();
 
     const newMsg: ChatMessage = {
       id: Date.now().toString(),
@@ -279,6 +282,9 @@ export function ChatInterface({ selectedUser }: ChatInterfaceProps) {
     if (mediaRecorderRef.current && isRecording) {
       mediaRecorderRef.current.stop();
       setIsRecording(false);
+
+      // Play audio open sound when recording stops
+      playAudioOpenSound();
     }
   };
 
@@ -406,6 +412,7 @@ export function ChatInterface({ selectedUser }: ChatInterfaceProps) {
               size="icon" 
               onClick={handleMediaUploadClick} 
               title="Attach file"
+              className="transition-transform hover:scale-110 active:scale-95"
             >
               <Plus size={20} />
             </Button>
@@ -423,7 +430,7 @@ export function ChatInterface({ selectedUser }: ChatInterfaceProps) {
                 variant="destructive"
                 size="icon"
                 onClick={stopRecording}
-                className="animate-pulse"
+                className="animate-pulse transition-transform hover:scale-110 active:scale-95"
                 title="Stop recording"
               >
                 <MicOff size={20} />
@@ -433,6 +440,7 @@ export function ChatInterface({ selectedUser }: ChatInterfaceProps) {
                 variant="ghost" 
                 size="icon" 
                 onClick={startRecording}
+                className="transition-transform hover:scale-110 active:scale-95"
                 title="Record audio"
               >
                 <Mic size={20} />
@@ -454,7 +462,7 @@ export function ChatInterface({ selectedUser }: ChatInterfaceProps) {
             onClick={handleSendMessage}
             disabled={(!newMessage.trim() && !mediaPreview && !audioBlob) || isRecording}
             size="icon"
-            className="retro-button"
+            className="retro-button transition-transform hover:scale-110 active:scale-95"
           >
             <Send size={20} />
           </Button>
