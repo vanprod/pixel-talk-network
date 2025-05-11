@@ -1,3 +1,4 @@
+
 // Data service for managing user data and messages
 import { User } from '@/types/auth';
 
