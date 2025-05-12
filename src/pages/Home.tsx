@@ -5,11 +5,11 @@ import { ThemeToggle } from '@/components/ThemeToggle';
 
 export default function Home() {
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col bg-[#1C2533]">
       {/* Header with navigation */}
-      <header className="border-b p-4">
+      <header className="border-b border-gray-700 p-4">
         <div className="container mx-auto flex items-center justify-between">
-          <h1 className="font-mono font-bold text-lg">HADRA</h1>
+          <h1 className="font-mono font-bold text-lg text-hadra-green">HADRA</h1>
           <div className="flex items-center gap-4">
             <Link to="/login" className="retro-button text-sm transition-transform hover:scale-110 active:scale-95 animate-click-effect">LOGIN</Link>
             <Link to="/register" className="retro-button text-sm transition-transform hover:scale-110 active:scale-95 animate-click-effect">SIGN UP</Link>
@@ -21,8 +21,8 @@ export default function Home() {
       {/* Main content area */}
       <div className="flex-1 flex items-center justify-center p-4">
         <div className="max-w-md text-center">
-          <div className="retro-card p-6">
-            <h2 className="text-xl font-bold mb-4">WELCOME TO HADRA</h2>
+          <div className="retro-card border-hadra-green/30 p-6">
+            <h2 className="text-xl font-bold mb-4 text-hadra-green">WELCOME TO HADRA</h2>
             <p className="mb-6">
               A modern messaging platform with secure communications.
               Connect with friends in a secure, minimalist environment.
@@ -41,7 +41,7 @@ export default function Home() {
       </div>
       
       {/* Footer with app info */}
-      <footer className="border-t p-6 bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 text-white">
+      <footer className="border-t p-6 bg-gradient-to-r from-gray-900 via-[#1C2533] to-gray-900 text-white">
         <div className="container mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div>
@@ -60,6 +60,8 @@ export default function Home() {
                 <li>• Document sharing</li>
                 <li>• Story posts</li>
                 <li>• Real-time chat</li>
+                <li>• Video & Audio calls</li>
+                <li>• Message reactions & emojis</li>
               </ul>
             </div>
             

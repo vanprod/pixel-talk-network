@@ -113,10 +113,10 @@ export default {
 				},
 				'glow': {
 					'0%, 100%': { 
-						boxShadow: '0 0 5px rgba(255, 255, 255, 0.5), 0 0 10px rgba(255, 255, 255, 0.3)'
+						boxShadow: '0 0 5px rgba(107, 206, 109, 0.5), 0 0 10px rgba(107, 206, 109, 0.3)'
 					},
 					'50%': { 
-						boxShadow: '0 0 8px rgba(255, 255, 255, 0.8), 0 0 15px rgba(255, 255, 255, 0.5)' 
+						boxShadow: '0 0 8px rgba(107, 206, 109, 0.8), 0 0 15px rgba(107, 206, 109, 0.5)' 
 					}
 				},
 				'fade-in': {
@@ -151,7 +151,7 @@ export default {
 				'click-effect': 'click-effect 0.3s ease-in-out'
 			},
 			boxShadow: {
-				'retro': '0 0 5px rgba(255, 255, 255, 0.5), 0 0 10px rgba(255, 255, 255, 0.3)',
+				'retro': '0 0 5px rgba(107, 206, 109, 0.5), 0 0 10px rgba(107, 206, 109, 0.3)',
 			}
 		}
 	},
