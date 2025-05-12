@@ -11,6 +11,7 @@ import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
+import Stories from "./pages/Stories";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -30,6 +31,11 @@ const App = () => (
               <Route path="/dashboard" element={
                 <ProtectedRoute>
                   <Dashboard />
+                </ProtectedRoute>
+              } />
+              <Route path="/stories" element={
+                <ProtectedRoute>
+                  <Stories />
                 </ProtectedRoute>
               } />
               <Route path="*" element={<NotFound />} />

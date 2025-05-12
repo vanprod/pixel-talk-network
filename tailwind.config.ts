@@ -77,6 +77,9 @@ export default {
 						800: '#333333',
 						900: '#222222',
 					}
+				},
+				hadra: {
+					green: '#6BCE6D'
 				}
 			},
 			fontFamily: {
@@ -131,6 +134,11 @@ export default {
 					'100%': {
 						transform: 'translateX(0)'
 					}
+				},
+				'click-effect': {
+					'0%': { transform: 'scale(1)', opacity: '1' },
+					'50%': { transform: 'scale(0.95)', opacity: '0.8' },
+					'100%': { transform: 'scale(1)', opacity: '1' }
 				}
 			},
 			animation: {
@@ -139,7 +147,8 @@ export default {
 				'cursor-blink': 'cursor-blink 1.5s infinite',
 				'glow': 'glow 3s ease-in-out infinite',
 				'fade-in': 'fade-in 0.3s ease-out',
-				'slide-in': 'slide-in 0.3s ease-out'
+				'slide-in': 'slide-in 0.3s ease-out',
+				'click-effect': 'click-effect 0.3s ease-in-out'
 			},
 			boxShadow: {
 				'retro': '0 0 5px rgba(255, 255, 255, 0.5), 0 0 10px rgba(255, 255, 255, 0.3)',

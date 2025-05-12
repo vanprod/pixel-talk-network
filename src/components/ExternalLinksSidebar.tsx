@@ -1,10 +1,12 @@
 
 import React, { useState } from 'react';
-import { ExternalLink, BookText } from 'lucide-react'; // Changed Story to BookText
+import { ExternalLink, BookText } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
 import { FriendsManager } from '@/components/FriendsManager';
 import { StoryCreator } from '@/components/StoryCreator';
+import { Link, useNavigate } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
 
 interface LinkItem {
   id: string;
@@ -83,6 +85,11 @@ const CRYPTO_NEWS: NewsItem[] = [
 
 export function ExternalLinksSidebar() {
   const [activeTab, setActiveTab] = useState('news');
+  const navigate = useNavigate();
+  
+  const handleViewAllStories = () => {
+    navigate('/stories');
+  };
   
   return (
     <div className="h-full flex flex-col">
@@ -102,7 +109,7 @@ export function ExternalLinksSidebar() {
                 href={news.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="block p-3 rounded border hover:bg-muted transition-colors"
+                className="block p-3 rounded border hover:bg-muted transition-colors animate-click-effect"
               >
                 <h4 className="font-medium text-sm">{news.title}</h4>
                 <div className="flex justify-between text-xs text-muted-foreground mt-2">
@@ -123,7 +130,7 @@ export function ExternalLinksSidebar() {
                 href={link.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="block p-2 rounded hover:bg-muted transition-colors"
+                className="block p-2 rounded hover:bg-muted transition-colors animate-click-effect"
               >
                 <div className="flex items-center space-x-2">
                   <ExternalLink size={16} />
@@ -142,7 +149,19 @@ export function ExternalLinksSidebar() {
         <TabsContent value="social" className="overflow-y-auto flex-1">
           <div className="space-y-4">
             <div className="border-b">
-              <StoryCreator />
+              <div className="p-4">
+                <StoryCreator />
+                <div className="mt-4 flex justify-center">
+                  <Button 
+                    onClick={handleViewAllStories}
+                    variant="outline" 
+                    className="w-full bg-hadra-green/10 hover:bg-hadra-green/20 text-hadra-green border-hadra-green/30"
+                  >
+                    <BookText className="mr-2 h-4 w-4" />
+                    View All Stories
+                  </Button>
+                </div>
+              </div>
             </div>
             <FriendsManager />
           </div>

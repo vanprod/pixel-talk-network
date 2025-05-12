@@ -11,8 +11,8 @@ export default function Home() {
         <div className="container mx-auto flex items-center justify-between">
           <h1 className="font-mono font-bold text-lg">HADRA</h1>
           <div className="flex items-center gap-4">
-            <Link to="/login" className="retro-button text-sm transition-transform hover:scale-110 active:scale-95">LOGIN</Link>
-            <Link to="/register" className="retro-button text-sm transition-transform hover:scale-110 active:scale-95">SIGN UP</Link>
+            <Link to="/login" className="retro-button text-sm transition-transform hover:scale-110 active:scale-95 animate-click-effect">LOGIN</Link>
+            <Link to="/register" className="retro-button text-sm transition-transform hover:scale-110 active:scale-95 animate-click-effect">SIGN UP</Link>
             <ThemeToggle />
           </div>
         </div>
@@ -39,6 +39,46 @@ export default function Home() {
           </div>
         </div>
       </div>
+      
+      {/* Footer with app info */}
+      <footer className="border-t p-6 bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 text-white">
+        <div className="container mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div>
+              <h3 className="font-bold text-hadra-green mb-3">About Hadra</h3>
+              <p className="text-sm">
+                Hadra is a modern messaging application designed for secure and private communications. 
+                Our platform prioritizes your privacy while providing a feature-rich experience.
+              </p>
+            </div>
+            
+            <div>
+              <h3 className="font-bold text-hadra-green mb-3">Features</h3>
+              <ul className="text-sm space-y-2">
+                <li>• End-to-end encryption</li>
+                <li>• Media sharing (images, videos, audio)</li>
+                <li>• Document sharing</li>
+                <li>• Story posts</li>
+                <li>• Real-time chat</li>
+              </ul>
+            </div>
+            
+            <div>
+              <h3 className="font-bold text-hadra-green mb-3">Connect With Us</h3>
+              <p className="text-sm mb-2">
+                Have questions or suggestions? Reach out to our support team.
+              </p>
+              <a href="mailto:support@hadra.com" className="text-sm text-hadra-green hover:underline">
+                support@hadra.com
+              </a>
+            </div>
+          </div>
+          
+          <div className="mt-8 pt-4 border-t border-gray-700 text-center text-xs text-gray-400">
+            © {new Date().getFullYear()} Hadra Messaging. All rights reserved.
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }

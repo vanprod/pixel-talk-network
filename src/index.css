@@ -122,7 +122,7 @@
     @apply animate-glow;
   }
   
-  /* New button animations */
+  /* Button animations */
   .btn-click {
     @apply transition-transform active:scale-95;
   }
@@ -133,6 +133,14 @@
   
   .icon-pulse {
     @apply hover:animate-pulse;
+  }
+  
+  /* Click animation for buttons and icons */
+  .btn-click-effect, 
+  .icon-click-effect,
+  button:active:not([disabled]),
+  a[role="button"]:active {
+    @apply animate-click-effect;
   }
 }
 
