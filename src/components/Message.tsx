@@ -11,6 +11,7 @@ interface MessageProps {
   content: string;
   timestamp: Date;
   isCurrentUser: boolean;
+  isSystemMessage?: boolean;
   sender?: {
     name: string;
     avatar?: string;
@@ -32,6 +33,7 @@ export function Message({
   content, 
   timestamp, 
   isCurrentUser, 
+  isSystemMessage = false,
   sender, 
   imageUrl, 
   videoUrl, 
@@ -109,22 +111,28 @@ export function Message({
 
   return (
     <div className={`flex ${isCurrentUser ? 'justify-end' : 'justify-start'} mb-4`}>
-      {!isCurrentUser && sender && (
+      {!isCurrentUser && sender && !isSystemMessage && (
         <div className="mr-2 mt-1">
           <UserAvatar name={sender.name} image={sender.avatar} size="sm" />
         </div>
       )}
       
-      <div className="relative">
+      <div className="relative max-w-[80%]">
         <div className={cn(
-          "max-w-[70%] rounded px-3 py-2",
+          "rounded px-3 py-2",
           (imageUrl || videoUrl || fileUrl || audioUrl) && "max-w-xs",
-          isCurrentUser 
-            ? 'bg-hadra-green text-white' 
-            : 'bg-secondary text-secondary-foreground'
+          isSystemMessage 
+            ? 'bg-gray-500/30 text-white italic border border-gray-500/50' 
+            : isCurrentUser 
+              ? 'bg-hadra-green text-white' 
+              : 'bg-secondary text-secondary-foreground'
         )}>
-          {!isCurrentUser && sender && (
+          {!isCurrentUser && sender && !isSystemMessage && (
             <div className="text-xs font-bold mb-1">{sender.name}</div>
+          )}
+
+          {isSystemMessage && (
+            <div className="text-xs font-semibold mb-1">System Message</div>
           )}
           
           {imageUrl && (
@@ -191,8 +199,8 @@ export function Message({
           </div>
         </div>
         
-        {/* Reaction buttons */}
-        <div className="mt-1 flex justify-end space-x-1">
+        {/* Repositioned Reaction Buttons - now below the message */}
+        <div className="mt-1 flex justify-start space-x-1">
           {reactions.some(r => r.count > 0) && (
             <div className="flex bg-background/80 rounded-full px-2 py-0.5 text-xs border border-gray-300 dark:border-gray-700">
               {reactions
@@ -211,19 +219,21 @@ export function Message({
             </div>
           )}
           
-          <Button 
-            variant="ghost" 
-            size="icon" 
-            className="h-6 w-6 rounded-full bg-background/80 hover:bg-background"
-            onClick={() => setShowReactionPicker(!showReactionPicker)}
-          >
-            <SmilePlus size={14} />
-          </Button>
+          {!isSystemMessage && (
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              className="h-6 w-6 rounded-full bg-background/80 hover:bg-background"
+              onClick={() => setShowReactionPicker(!showReactionPicker)}
+            >
+              <SmilePlus size={14} />
+            </Button>
+          )}
         </div>
         
-        {/* Reaction picker */}
+        {/* Reaction picker - repositioned */}
         {showReactionPicker && (
-          <div className="absolute bottom-8 right-0 bg-background shadow-lg rounded-lg p-1 flex space-x-1 border border-gray-300 dark:border-gray-700 z-10">
+          <div className="absolute top-full left-0 mt-2 bg-background shadow-lg rounded-lg p-1 flex space-x-1 border border-gray-300 dark:border-gray-700 z-10">
             {reactions.map((reaction, index) => (
               <button
                 key={index}

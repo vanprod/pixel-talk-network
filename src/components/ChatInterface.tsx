@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Send, Image, RefreshCw, Plus, X, FileText, Video, File, Play, Mic, MicOff } from 'lucide-react';
+import { Send, Image, RefreshCw, Plus, X, FileText, Video, File, Play, Mic, MicOff, PhoneCall } from 'lucide-react';
 import { Message } from './Message';
 import { UserAvatar } from './UserAvatar';
 import { useAuth } from '@/contexts/AuthContext';
@@ -296,6 +296,32 @@ export function ChatInterface({ selectedUser }: ChatInterfaceProps) {
     }
   };
 
+  const sendSystemMessage = () => {
+    const systemMsg: ChatMessage = {
+      id: Date.now().toString() + 'sys',
+      content: `System: ${selectedUser.name} is now available for chat.`,
+      timestamp: new Date(),
+      senderId: 'system',
+      senderName: 'System'
+    };
+    
+    setMessages(prev => [...prev, systemMsg]);
+    toast({
+      title: "System Message",
+      description: "System notification sent",
+      duration: 2000,
+    });
+  };
+
+  const initiateCall = () => {
+    toast({
+      title: "Initiating Call",
+      description: `Calling ${selectedUser.name}...`,
+      duration: 2000,
+    });
+    // In a real app, this would trigger the call functionality
+  };
+
   return (
     <div className="flex flex-col h-full">
       {/* Chat header */}
@@ -314,9 +340,20 @@ export function ChatInterface({ selectedUser }: ChatInterfaceProps) {
           </div>
         </div>
         
-        <Button variant="ghost" size="icon" onClick={handleRefresh} title="Refresh messages">
-          <RefreshCw size={20} className={isLoading ? 'animate-spin' : ''} />
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            onClick={initiateCall}
+            className="text-hadra-green hover:bg-hadra-green/20"
+            title="Call user"
+          >
+            <PhoneCall size={20} />
+          </Button>
+          <Button variant="ghost" size="icon" onClick={handleRefresh} title="Refresh messages">
+            <RefreshCw size={20} className={isLoading ? 'animate-spin' : ''} />
+          </Button>
+        </div>
       </div>
       
       {/* Messages area */}
@@ -337,7 +374,8 @@ export function ChatInterface({ selectedUser }: ChatInterfaceProps) {
               content={msg.content}
               timestamp={msg.timestamp}
               isCurrentUser={currentUser?.id === msg.senderId}
-              sender={currentUser?.id !== msg.senderId ? {
+              isSystemMessage={msg.senderId === 'system'}
+              sender={currentUser?.id !== msg.senderId && msg.senderId !== 'system' ? {
                 name: msg.senderName,
                 avatar: msg.senderAvatar
               } : undefined}
@@ -403,7 +441,7 @@ export function ChatInterface({ selectedUser }: ChatInterfaceProps) {
         </div>
       )}
       
-      {/* Message input */}
+      {/* Message input with system message button */}
       <div className="p-4 border-t">
         <div className="flex space-x-2">
           <div className="flex gap-1">
@@ -446,6 +484,21 @@ export function ChatInterface({ selectedUser }: ChatInterfaceProps) {
                 <Mic size={20} />
               </Button>
             )}
+            
+            <Button 
+              variant="ghost"
+              size="icon"
+              onClick={sendSystemMessage}
+              className="transition-transform hover:scale-110 active:scale-95 text-gray-500"
+              title="Send system message"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-server">
+                <rect width="20" height="8" x="2" y="2" rx="2" ry="2"></rect>
+                <rect width="20" height="8" x="2" y="14" rx="2" ry="2"></rect>
+                <line x1="6" x2="6" y1="6" y2="6"></line>
+                <line x1="6" x2="6" y1="18" y2="18"></line>
+              </svg>
+            </Button>
           </div>
           
           <input
