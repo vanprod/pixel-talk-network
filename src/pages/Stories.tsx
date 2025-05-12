@@ -48,7 +48,7 @@ const mockStories = [
 
 export default function Stories() {
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { currentUser } = useAuth(); // Changed from 'user' to 'currentUser' to match the AuthContextType
   const [activeTab, setActiveTab] = useState('all');
   const [showStoryCreator, setShowStoryCreator] = useState(false);
   const { createStory } = useMessageService();
