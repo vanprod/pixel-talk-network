@@ -1,11 +1,10 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { ThemeToggle } from '@/components/ThemeToggle';
 
 export default function Home() {
   return (
-    <div className="min-h-screen flex flex-col bg-[#1C2533]">
+    <div className="min-h-screen flex flex-col bg-black">
       {/* Header with navigation */}
       <header className="border-b border-gray-700 p-4">
         <div className="container mx-auto flex items-center justify-between">
@@ -41,7 +40,7 @@ export default function Home() {
       </div>
       
       {/* Footer with app info */}
-      <footer className="border-t p-6 bg-gradient-to-r from-gray-900 via-[#1C2533] to-gray-900 text-white">
+      <footer className="border-t p-6 bg-gradient-to-r from-gray-900 via-black to-gray-900 text-white">
         <div className="container mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div>

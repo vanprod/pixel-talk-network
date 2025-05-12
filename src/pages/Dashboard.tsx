@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { AppLayout } from '@/layouts/AppLayout';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, PhoneCall } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 import { CallInterface } from '@/components/CallInterface';
 
 export default function Dashboard() {
@@ -39,15 +39,6 @@ export default function Dashboard() {
             Back
           </Button>
           <h1 className="font-mono font-bold">HADRA Dashboard</h1>
-          <Button
-            variant="outline"
-            size="sm"
-            className="ml-auto text-hadra-green border-hadra-green hover:bg-hadra-green/20"
-            onClick={() => startCall('Demo User')}
-          >
-            <PhoneCall className="mr-2 h-4 w-4" />
-            Start Call
-          </Button>
         </div>
       </header>
       
