@@ -88,6 +88,10 @@
     @apply bg-retro-white text-retro-black border-retro-black;
   }
 
+  .light .retro-button {
+    @apply bg-retro-black text-retro-white border-retro-white;
+  }
+
   /* Retro Terminal Cursor */
   .terminal-cursor::after {
     content: "|";
@@ -103,6 +107,10 @@
     @apply focus:ring-retro-white;
   }
 
+  .light .retro-input {
+    @apply focus:ring-retro-black;
+  }
+
   /* Remove outline around UI components except on keyboard focus */
   :focus:not(:focus-visible) {
     outline: none;
@@ -116,6 +124,10 @@
   
   .dark .retro-card {
     @apply bg-retro-black border-retro-gray-700;
+  }
+  
+  .light .retro-card {
+    @apply bg-retro-white border-retro-gray-400;
   }
   
   .retro-glow {

@@ -1,10 +1,11 @@
+
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { ThemeToggle } from '@/components/ThemeToggle';
 
 export default function Home() {
   return (
-    <div className="min-h-screen flex flex-col bg-black">
+    <div className="min-h-screen flex flex-col bg-black dark:bg-black">
       {/* Header with navigation */}
       <header className="border-b border-gray-700 p-4">
         <div className="container mx-auto flex items-center justify-between">
@@ -22,7 +23,7 @@ export default function Home() {
         <div className="max-w-md text-center">
           <div className="retro-card border-hadra-green/30 p-6">
             <h2 className="text-xl font-bold mb-4 text-hadra-green">WELCOME TO HADRA</h2>
-            <p className="mb-6">
+            <p className="mb-6 dark:text-white text-white">
               A modern messaging platform with secure communications.
               Connect with friends in a secure, minimalist environment.
             </p>
