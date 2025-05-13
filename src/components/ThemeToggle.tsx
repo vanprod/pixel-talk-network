@@ -12,7 +12,7 @@ export function ThemeToggle() {
       onClick={toggleTheme} 
       variant="outline"
       size="sm"
-      className={`retro-button ${theme === 'dark' ? 'text-retro-white' : 'text-retro-black'}`}
+      className={`retro-button ${theme === 'dark' ? 'text-foreground' : 'text-foreground'}`}
       aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
     >
       {theme === 'dark' ? (

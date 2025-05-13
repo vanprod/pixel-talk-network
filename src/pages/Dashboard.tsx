@@ -26,8 +26,8 @@ export default function Dashboard() {
   };
   
   return (
-    <div className="flex flex-col min-h-screen bg-gradient-to-b from-black to-muted">
-      <header className="border-b p-2 bg-black shadow-sm">
+    <div className="flex flex-col min-h-screen bg-gradient-to-b from-background to-muted">
+      <header className="border-b p-2 bg-card shadow-sm">
         <div className="container mx-auto flex items-center gap-4">
           <Button 
             variant="ghost" 

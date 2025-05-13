@@ -36,13 +36,18 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     if (typeof window !== 'undefined') {
       localStorage.setItem('theme', theme);
       
+      const html = document.documentElement;
+      
       if (theme === 'dark') {
-        document.documentElement.classList.add('dark');
-        document.documentElement.classList.remove('light');
+        html.classList.add('dark');
+        html.classList.remove('light');
       } else {
-        document.documentElement.classList.add('light');
-        document.documentElement.classList.remove('dark');
+        html.classList.add('light');
+        html.classList.remove('dark');
       }
+      
+      // Also update data-theme attribute for components that might use it
+      html.setAttribute('data-theme', theme);
     }
   }, [theme]);
 

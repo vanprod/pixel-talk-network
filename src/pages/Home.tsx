@@ -5,9 +5,9 @@ import { ThemeToggle } from '@/components/ThemeToggle';
 
 export default function Home() {
   return (
-    <div className="min-h-screen flex flex-col bg-black dark:bg-black">
+    <div className="min-h-screen flex flex-col bg-background dark:bg-black">
       {/* Header with navigation */}
-      <header className="border-b border-gray-700 p-4">
+      <header className="border-b border-gray-700 dark:border-gray-700 p-4">
         <div className="container mx-auto flex items-center justify-between">
           <h1 className="font-mono font-bold text-lg text-hadra-green">HADRA</h1>
           <div className="flex items-center gap-4">
@@ -23,7 +23,7 @@ export default function Home() {
         <div className="max-w-md text-center">
           <div className="retro-card border-hadra-green/30 p-6">
             <h2 className="text-xl font-bold mb-4 text-hadra-green">WELCOME TO HADRA</h2>
-            <p className="mb-6 dark:text-white text-white">
+            <p className="mb-6 text-foreground">
               A modern messaging platform with secure communications.
               Connect with friends in a secure, minimalist environment.
             </p>
@@ -41,7 +41,7 @@ export default function Home() {
       </div>
       
       {/* Footer with app info */}
-      <footer className="border-t p-6 bg-gradient-to-r from-gray-900 via-black to-gray-900 text-white">
+      <footer className="border-t p-6 bg-gradient-to-r from-muted via-background to-muted dark:from-gray-900 dark:via-black dark:to-gray-900 text-foreground dark:text-white">
         <div className="container mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div>
@@ -76,7 +76,7 @@ export default function Home() {
             </div>
           </div>
           
-          <div className="mt-8 pt-4 border-t border-gray-700 text-center text-xs text-gray-400">
+          <div className="mt-8 pt-4 border-t border-gray-700 text-center text-xs text-muted-foreground">
             © {new Date().getFullYear()} Hadra Messaging. All rights reserved.
           </div>
         </div>
