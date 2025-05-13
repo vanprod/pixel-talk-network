@@ -19,6 +19,11 @@ export function UserAvatar({ name, image, size = 'md', status }: UserAvatarProps
   
   // Get initials for avatar fallback
   const getInitials = (name: string) => {
+    // Handle undefined or empty name
+    if (!name || typeof name !== 'string') {
+      return 'U';
+    }
+    
     return name
       .split(' ')
       .map(part => part[0])
@@ -31,10 +36,10 @@ export function UserAvatar({ name, image, size = 'md', status }: UserAvatarProps
     <div className="relative">
       <Avatar className={`${sizeClass[size]} border-2 border-border`}>
         {image ? (
-          <AvatarImage src={image} alt={name} />
+          <AvatarImage src={image} alt={name || 'User'} />
         ) : null}
         <AvatarFallback className="font-mono">
-          {getInitials(name)}
+          {getInitials(name || '')}
         </AvatarFallback>
       </Avatar>
       
