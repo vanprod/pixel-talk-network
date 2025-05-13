@@ -80,7 +80,7 @@
 
   /* Custom retro button styles */
   .retro-button {
-    @apply relative overflow-hidden bg-retro-black text-retro-white border border-retro-white px-4 py-2 
+    @apply relative overflow-hidden px-4 py-2 
     transition-all duration-200 hover:shadow-retro active:scale-95;
   }
 
@@ -100,15 +100,15 @@
   
   /* Retro Input Styling */
   .retro-input {
-    @apply bg-transparent border border-retro-gray-400 px-3 py-2 font-mono focus:ring-1 focus:ring-retro-white;
+    @apply bg-transparent border px-3 py-2 font-mono focus:ring-1;
   }
   
   .dark .retro-input {
-    @apply focus:ring-retro-white;
+    @apply border-retro-gray-400 focus:ring-retro-white;
   }
 
   .light .retro-input {
-    @apply focus:ring-retro-black;
+    @apply border-retro-gray-700 focus:ring-retro-black;
   }
 
   /* Remove outline around UI components except on keyboard focus */
@@ -119,15 +119,15 @@
 
 @layer components {
   .retro-card {
-    @apply bg-retro-white border border-retro-gray-400 p-4;
+    @apply p-4 border;
   }
   
   .dark .retro-card {
-    @apply bg-retro-black border-retro-gray-700;
+    @apply bg-retro-black border-retro-gray-700 text-retro-white;
   }
   
   .light .retro-card {
-    @apply bg-retro-white border-retro-gray-400;
+    @apply bg-retro-white border-retro-gray-400 text-retro-black;
   }
   
   .retro-glow {
@@ -164,3 +164,43 @@
 .animate-bounce-slow {
   animation: bounce 2s ease-in-out infinite;
 }
+
+/* Added for toast component */
+.toast-theme {
+  @apply font-mono;
+}
+
+.dark .toast-theme {
+  @apply bg-retro-black border-retro-gray-700 text-retro-white;
+}
+
+.light .toast-theme {
+  @apply bg-retro-white border-retro-gray-400 text-retro-black;
+}
+
+/* System message styling */
+.system-message {
+  @apply rounded-md border p-2 text-sm;
+}
+
+.dark .system-message {
+  @apply bg-retro-black/30 border-hadra-green/30 text-hadra-green;
+}
+
+.light .system-message {
+  @apply bg-retro-white/30 border-hadra-green/30 text-hadra-green/80;
+}
+
+/* Call interface specific styles */
+.call-container {
+  @apply rounded-xl border shadow-lg p-6 w-full max-w-md;
+}
+
+.dark .call-container {
+  @apply bg-black/70 border-hadra-green/30;
+}
+
+.light .call-container {
+  @apply bg-white/90 border-hadra-green/30;
+}
+

@@ -12,11 +12,11 @@ export function ThemeToggle() {
       onClick={toggleTheme} 
       variant="outline"
       size="sm"
-      className="retro-button"
+      className={`retro-button ${theme === 'dark' ? 'text-retro-white' : 'text-retro-black'}`}
       aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
     >
       {theme === 'dark' ? (
-        <Sun size={18} className="inline mr-2" />
+        <Sun size={18} className="inline mr-2 text-hadra-green" />
       ) : (
         <Moon size={18} className="inline mr-2" />
       )}
